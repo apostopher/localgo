@@ -1,0 +1,69 @@
+"use strict"
+
+http          = require 'http'
+_             = require 'lodash'
+express       = require 'express'
+socketio      = require 'socket.io'
+bodyParser    = require 'body-parser'
+engines       = require 'consolidate'
+config        = require './config/config'
+{MongoClient} = require 'mongodb'
+
+passport      = require 'passport'
+Facebook      = require './facebook'
+
+CLIENT_PATH = "#{__dirname}/../client/dist"
+class LocalgoServer
+  constructor: ->
+    @app = express()
+    @server = http.createServer @app
+    @io  = socketio @server
+    @app.use express.static CLIENT_PATH
+    @app.engine 'html', engines.hogan
+    @app.set 'views', CLIENT_PATH
+    @app.set 'view engine', 'html'
+    @app.use bodyParser()
+
+  init: (callback) ->
+    MongoClient.connect "mongodb://localhost:27017/localgo", (error, db) =>
+      if error then return callback error
+      @db = db
+      @configure()
+      @setupPassport()
+      @facebook_client = new Facebook @app, @db
+      @facebook_client.setup()
+      callback null
+
+  configure: ->
+    @app.get '/', (req, res) -> res.render 'index'
+    @app.get "/user_status.js", (req, res) => @sendActiveUser req, res
+
+  setupPassport: ->
+    @app.use passport.initialize()
+    @app.use passport.session()
+    passport.serializeUser (user, done) ->
+      username = "#{user.provider}:#{user.id}"
+      done null, username
+
+    passport.deserializeUser (id, done) =>
+      [provider, userid] = id.split ":"
+      @facebook_client.getUser userid, (error, user) =>
+        done error, user
+
+  start: (callback) ->
+    port = +process.argv[2] || config.port || 9090
+    @server.listen port, () -> callback port
+
+  sendActiveUser: (req, res) ->
+    if not req.user then req.user = {}
+    user_data = _.pick req.user, ['id', 'name']
+    body = "var __localgoActiveUser__ = #{JSON.stringify user_data};"
+    res.setHeader 'Content-Type', 'text/javascript'
+    res.setHeader 'Content-Length', body.length
+    res.end body
+
+if require.main is module
+  server_instance = new LocalgoServer()
+  server_instance.init (error) ->
+    if error then return console.log error
+    server_instance.start (port) -> console.log "listening on port #{port}."

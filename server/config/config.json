@@ -1,0 +1,14 @@
+{
+  
+  "id": "LocalgoServer",
+  "facebook": {
+    "app": {
+      "clientID": "1433836783541426",
+      "clientSecret": "92d6aafb14aa9a9b0c882a617fcf2a19",
+      "callbackURL": "http://localgo.apostopher.com/auth/facebook/callback"
+    },
+    "scope": [
+      "public_profile"
+    ]
+  }
+}

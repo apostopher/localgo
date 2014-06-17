@@ -1,0 +1,25 @@
+.feature {
+  border-top: 1px solid #bbb;
+  background: #f9f9f9;
+}
+.feature header {
+  background: #f9f9f9;
+  padding: 0px 5px;
+}
+.feature-header {
+  font-weight: 400;
+  letter-spacing: 1px;
+  padding: 4px 0 10px;
+  margin: 0;
+}
+
+.feature-body {
+  padding: 10px 20px;
+}
+
+.action-button {
+  color: #aaa;
+  cursor: pointer;
+  font-weight: 300;
+  line-height: 27px;
+}
