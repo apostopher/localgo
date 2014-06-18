@@ -5,6 +5,8 @@ _             = require 'lodash'
 express       = require 'express'
 socketio      = require 'socket.io'
 bodyParser    = require 'body-parser'
+cookieParser  = require 'cookie-parser'
+session       = require 'cookie-session'
 engines       = require 'consolidate'
 config        = require './config/config'
 {MongoClient} = require 'mongodb'
@@ -25,6 +27,8 @@ class LocalgoServer
     @app.set 'views', CLIENT_PATH
     @app.set 'view engine', 'html'
     @app.use bodyParser()
+    @app.use cookieParser()
+    @app.use session {secret: 'localgo'}
 
   init: (callback) ->
     MongoClient.connect "mongodb://localhost:27017/localgo", (error, db) =>
