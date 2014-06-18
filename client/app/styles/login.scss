@@ -8,6 +8,10 @@
   margin-bottom: 2em;
 }
 
+.fb-logout {
+  color: #4C66A4;
+}
+
 .fb-login {
   margin: 10px 0;
   text-align: center;
@@ -17,4 +21,14 @@
   background: #4C66A4;
   border-color: #4C66A4;
   color: white;
+}
+
+.active-user p {
+  font-weight: 100;
+  text-align: center;
+  display:block;
+}
+
+.fb-user {
+  font-weight: 200;
 }

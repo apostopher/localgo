@@ -14,6 +14,9 @@ class Facebook
   setup: ->
     @app.get '/auth/facebook', passport.authenticate 'facebook', {scope: config.facebook.scope}
     @app.get '/auth/facebook/callback', passport.authenticate 'facebook', { successRedirect: '/', failureRedirect: '/error' }
+    @app.get '/logout/facebook', (req, res) ->
+      req.logout()
+      res.redirect '/login'
 
     @app.get '/auth/facebook/deauthorize', (req, res) ->
       signed_request = req.body?.signed_request

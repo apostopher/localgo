@@ -1,6 +1,10 @@
 <div class="container">
   <div class="jumbotron">
     <h1 ng-style="getFunColor()">Localgo</h1>
-    <a ng-click="loginOauth('facebook')" class="btn btn-default btn-lg fb-login">Login with Facebook</a>   
+    <a ng-hide="activeUser" ng-click="loginOauth('facebook')" class="btn btn-default fb-login">Login with Facebook</a>
+    <div class="active-user" ng-show="activeUser">
+      <p>You are logged-in as <span class="fb-user">{{activeUser}}</span></p>
+      <a ng-click="logoutOauth('facebook')" class="btn btn-link fb-logout">Logout from Localgo</a>
+    </div>   
   </div>
 </div>

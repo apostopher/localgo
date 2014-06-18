@@ -17,6 +17,11 @@ angular.module('locationdesignerApp')
     $scope.loginOauth = (provider) ->
       $window.location.href = '/auth/' + provider
 
+    $scope.logoutOauth = (provider) ->
+      $window.location.href = '/logout/' + provider
+
+    $scope.activeUser = $window.__localgoActiveUser__?.name
+
     $scope.getFunColor = () ->
       setNewColor()
       color: heading_color
