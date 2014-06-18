@@ -12,6 +12,8 @@ config        = require './config/config'
 passport      = require 'passport'
 Facebook      = require './facebook'
 
+RESTController = require './RESTController'
+
 CLIENT_PATH = "#{__dirname}/../client/dist"
 class LocalgoServer
   constructor: ->
@@ -28,15 +30,22 @@ class LocalgoServer
     MongoClient.connect "mongodb://localhost:27017/localgo", (error, db) =>
       if error then return callback error
       @db = db
-      @configure()
       @setupPassport()
       @facebook_client = new Facebook @app, @db
       @facebook_client.setup()
+      @setupRoutes()
       callback null
 
-  configure: ->
+  setupRoutes: ->
     @app.get '/', (req, res) -> res.render 'index'
     @app.get "/user_status.js", (req, res) => @sendActiveUser req, res
+
+    _.each config.resources, (resource_name) =>
+      controller = new RESTController @db, resource_name
+      controller.set "end request", true
+      controller.setupRoutes @app
+
+    @app.get '*', (req, res) -> res.render 'index'
 
   setupPassport: ->
     @app.use passport.initialize()
