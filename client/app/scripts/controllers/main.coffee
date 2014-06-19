@@ -1,7 +1,7 @@
 'use strict'
 
 angular.module('locationdesignerApp')
-  .controller 'MainCtrl', ($scope, mapoptions, leafletData, drawoptions, drawstyles) ->
+  .controller 'MainCtrl', ($scope, mapoptions, leafletData, drawoptions, drawstyles, layerSyncService) ->
     mapoptions $scope
     leafletData.getMap().then (map) ->
       $scope.map = map
@@ -33,6 +33,7 @@ angular.module('locationdesignerApp')
         $scope.addLayer layer
         $scope.$apply ->
           $scope.drawn_items.addLayer layer
+          layerSyncService.addLayer layer, (error) -> console.log layer._id
 
       map.on 'draw:deleted', (event) ->
         layers = event.layers

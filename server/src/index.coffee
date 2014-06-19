@@ -69,7 +69,11 @@ class LocalgoServer
 
   sendActiveUser: (req, res) ->
     if not req.user then req.user = {}
-    user_data = _.pick req.user, ['id', 'name']
+    if process.env.NODE_ENV is 'production'
+      user_data = _.pick req.user, ['id', 'name']
+    else
+      user_data = id: '165516', 'name': 'test user'
+      
     body = "var __localgoActiveUser__ = #{JSON.stringify user_data};"
     res.setHeader 'Content-Type', 'text/javascript'
     res.setHeader 'Content-Length', body.length
