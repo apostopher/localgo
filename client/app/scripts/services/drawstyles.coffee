@@ -7,13 +7,12 @@ angular.module('locationdesignerApp')
         weight: 1
         color: "#000"
         fillColor: "#C7C7CC"
-        fillOpacity: 0.9
+        fillOpacity: 0.7
         opacity: 1
 
       activeStyle:
-        weight: 2
+        weight: 3
         color: "#000"
-        fillColor: "#EF4DB6"
-        fillOpacity: 0.9
+        fillOpacity: 1
         opacity : 1
     }

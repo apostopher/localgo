@@ -5,7 +5,7 @@ angular.module('locationdesignerApp')
     return (drawn_items) ->
       {
         draw:
-          polygon: true,
+          polygon: false,
           marker: false,
           rectangle : false,
           polyline : false,

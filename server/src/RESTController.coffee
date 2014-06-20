@@ -1,6 +1,7 @@
 "use strict"
 
-_  = require 'lodash'
+_          = require 'lodash'
+{ObjectID} = require 'mongodb'
 
 
 class RESTController
@@ -32,8 +33,8 @@ class RESTController
 
   getOne: (req, res, next) ->
     owner = req.params.owner
-    id    = req.params.id
-    @collection.findOne {owner, id}, (error, doc) =>
+    _id   = new ObjectID req.params.id
+    @collection.findOne {_id, owner}, (error, doc) =>
       if error then return next error
       res[@result_key] = doc
       next()
@@ -53,21 +54,21 @@ class RESTController
 
   update: (req, res, next) ->
     data = req.body || {}
-    id    = req.params.id
+    _id    = new ObjectID req.params.id
     owner = req.params.owner
 
     if @options["add update time"] is true
       data["updated_at"] = Date.now
 
-    @collection.update {id, owner}, {$set: data}, (error, num_of_updated_docs) =>
+    @collection.update {_id, owner}, {$set: _.omit data, '_id'}, (error, num_of_updated_docs) =>
       if error then return next error
       res[@result_key] = updated: num_of_updated_docs
       next()
 
   remove: (req, res, next) ->
     owner = req.params.owner
-    id    = req.params.id
-    @collection.remove {id, owner}, (error, num_of_removed_docs) =>
+    _id    = new ObjectID req.params.id
+    @collection.remove {_id, owner}, (error, num_of_removed_docs) =>
       if error then return next error
       res[@result_key] = removed: num_of_removed_docs
       next()

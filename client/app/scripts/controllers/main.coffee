@@ -7,6 +7,7 @@ angular.module('locationdesignerApp')
       $scope.map = map
       $scope.addControls map
       $scope.attachEvents map
+      $scope.getLayers()
 
     $scope.active_layers = []
     $scope.clicked_layer = undefined
@@ -29,38 +30,49 @@ angular.module('locationdesignerApp')
           $scope.active_layers = []
 
       map.on 'draw:created', (event) ->
-        layer = event.layer
-        $scope.addLayer layer
-        $scope.$apply ->
-          $scope.drawn_items.addLayer layer
-          layerSyncService.addLayer layer, (error) -> console.log layer._id
+        $scope.$apply -> $scope.addLayer event.layer
 
       map.on 'draw:deleted', (event) ->
-        layers = event.layers
-        $scope.removeLayers layers
-      
-    removeLayer = (layer) ->
-      $scope.$apply ->
-        _.remove $scope.active_layers, (active_layer) -> layer is active_layer
-        if $scope.clicked_layer is layer then $scope.clicked_layer = undefined
+        $scope.$apply -> $scope.removeLayers event.layers
 
-    $scope.removeLayers = (layers) -> layers.eachLayer removeLayer  
+      map.on 'draw:edited', (event) ->
+        $scope.$apply -> $scope.updateLayers event.layers
+      
+    $scope.removeLayers = (layers) -> layers.eachLayer (layer) ->
+      _.remove $scope.active_layers, (active_layer) -> layer is active_layer
+      if $scope.clicked_layer is layer then $scope.clicked_layer = undefined
+      layerSyncService.deleteLayer layer, (error, result) -> console.log result
+
+    $scope.updateLayers = (layers) -> layers.eachLayer (layer) ->
+      layerSyncService.updateLayer layer, (error, result) -> console.log result
+
+    $scope.getLayers = ->
+      layerSyncService.getLayers (error, layers) ->
+        if error then return console.log error
+        _.each layers, (layer) -> $scope.drawLayer layer, false
 
     onLayerClick = (event) ->
-      # SHIFT key is used to group layers
-      fresh_start = not event.originalEvent.shiftKey
-      layer = event.target
-      layer.setStyle drawstyles.activeStyle
-      $scope.addActive layer, fresh_start
-      true
+      $scope.$apply ->
+        # SHIFT key is used to group layers
+        fresh_start = not event.originalEvent.shiftKey
+        layer = event.target
+        layer.setStyle drawstyles.activeStyle
+        $scope.addActive layer, fresh_start
+
+    $scope.drawLayer = (layer, active = true) ->
+      if active
+        layer.setStyle drawstyles.activeStyle
+        $scope.addActive layer
+      layer.on 'click', onLayerClick
+      $scope.drawn_items.addLayer layer
 
     $scope.addLayer = (layer) ->
-      layer.setStyle drawstyles.activeStyle
-      $scope.addActive layer
-      layer.on 'click', onLayerClick
+      $scope.drawLayer layer
+      layerSyncService.addLayer layer, (error) ->
+        if error then console.log error
 
     $scope.addActive = (layer, fresh_start = true) ->
       $scope.clicked_layer = layer
       if -1 is _.indexOf $scope.active_layers, layer
         if fresh_start then $scope.active_layers = []
-        $scope.$apply -> $scope.active_layers.push layer
+        $scope.active_layers.push layer

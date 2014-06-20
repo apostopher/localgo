@@ -33,7 +33,7 @@ describe 'RESTController', ->
         restController.add req, res, (error) ->
           if error then return callback error
           expect(res.result[0].name).to.equal req.body.name
-          inserted_records.push res.result[0].id
+          inserted_records.push res.result[0]._id
           callback()
       , done
 
@@ -68,7 +68,7 @@ describe 'RESTController', ->
           name: 'samsung'
       restController.update req, res, (error) ->
         if error then return done error
-        expect(res.result).to.equal 1
+        expect(res.result.updated).to.equal 1
         done()
 
     it 'should remove the records correctly', (done) ->
@@ -80,6 +80,6 @@ describe 'RESTController', ->
             id: inserted_records[num]
         restController.remove req, res, (error) ->
           if error then return callback error
-          expect(res.result).to.equal 1
+          expect(res.result.removed).to.equal 1
           callback()
       , done

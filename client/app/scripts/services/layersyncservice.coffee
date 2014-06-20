@@ -22,25 +22,23 @@ angular.module('locationdesignerApp')
         if not _.has specs.geoJSON, 'properties'
           specs.geoJSON.properties = {}
         specs.geoJSON.properties.radius = layer.getRadius()
-
+      if layer._id then specs._id = layer._id 
       specs
+
+    pointToLayer = (feature, latlng) ->
+      radius = feature.properties.radius || 100 # TODO :: hardcoding
+      L.circle latlng, radius
 
     specsToLayer = (specs) ->
       options =
         style: (feature) -> specs.drawOptions
-        pointToLayer: (feature, latlng) ->
-          radius = feature.properties.radius || 100 # TODO :: hardcoding
-          L.circle latlng, radius
+        pointToLayer: pointToLayer
 
-      layer = L.geoJson specs.geoJSON, options
+      geoJson = L.geoJson specs.geoJSON, options
+      layer = _.first geoJson.getLayers()
       layer.localgoOptions = specs.localgoOptions || {}
+      layer._id = specs._id
       layer
-      
-    resolveResponse = (result, callback) ->
-      if result
-        callback null, result
-      else
-        callback new Error result.error
 
     # Public API here
     {
@@ -59,14 +57,13 @@ angular.module('locationdesignerApp')
           if result?._id then layer._id = result._id
           callback null
 
-      updateLayer: (layer_specs, callback) ->
+      updateLayer: (layer, callback) ->
+        layer_specs = layerToSpecs layer
         update_promise = $http.put "#{base_path}/update/#{layer_specs._id}", layer_specs
-        update_promise.success (result) -> resolveResponse result, callback
+        update_promise.success (result) -> callback
 
-      deleteLayers: (layers, callback) ->
-        specs = _.map layers, layerToSpecs
-        async.each specs, (spec, next) ->
-          delete_promise = $http.delete "#{base_path}/delete/#{spec._id}"
-          delete_promise.success (result) -> next result.error
-        , callback
+      deleteLayer: (layer, callback) ->
+        layer_specs = layerToSpecs layer
+        delete_promise = $http.delete "#{base_path}/remove/#{layer_specs._id}"
+        delete_promise.success (result) -> callback null, result
     }
