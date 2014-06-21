@@ -12,10 +12,6 @@ angular.module('locationdesignerApp')
     $scope.active_layers = []
     $scope.clicked_layer = undefined
 
-    $scope.$watch 'active_layers', (new_layers, old_layers) ->
-      for layer in old_layers
-        layer.setStyle drawstyles.defaultStyle
-
     $scope.addControls = (map) ->
       drawn_items = new L.FeatureGroup()
       $scope.drawn_items = drawn_items #Save this layer
@@ -27,7 +23,8 @@ angular.module('locationdesignerApp')
       map.on 'click', (event) ->
         $scope.$apply ->
           $scope.clicked_layer = undefined
-          $scope.active_layers = []
+          $scope.active_layers.length = 0
+          $scope.restyleLayers()
 
       map.on 'draw:created', (event) ->
         $scope.$apply -> $scope.addLayer event.layer
@@ -56,23 +53,35 @@ angular.module('locationdesignerApp')
         # SHIFT key is used to group layers
         fresh_start = not event.originalEvent.shiftKey
         layer = event.target
-        layer.setStyle drawstyles.activeStyle
-        $scope.addActive layer, fresh_start
+        if -1 is _.indexOf $scope.active_layers, layer
+          $scope.addActive layer, fresh_start
+        else
+          $scope.removeActive layer
 
     $scope.drawLayer = (layer, active = true) ->
       if active
-        layer.setStyle drawstyles.activeStyle
         $scope.addActive layer
       layer.on 'click', onLayerClick
       $scope.drawn_items.addLayer layer
 
     $scope.addLayer = (layer) ->
-      $scope.drawLayer layer
       layerSyncService.addLayer layer, (error) ->
         if error then console.log error
+      $scope.drawLayer layer
 
     $scope.addActive = (layer, fresh_start = true) ->
       $scope.clicked_layer = layer
-      if -1 is _.indexOf $scope.active_layers, layer
-        if fresh_start then $scope.active_layers = []
-        $scope.active_layers.push layer
+      if fresh_start then $scope.active_layers.length = 0
+      $scope.active_layers.push layer
+      $scope.restyleLayers()
+
+    $scope.removeActive = (layer) ->
+      _.remove $scope.active_layers, (active_layer) -> active_layer is layer
+      $scope.restyleLayers()
+
+    $scope.restyleLayers = ->
+      $scope.drawn_items?.eachLayer (layer) ->
+        if -1 is _.indexOf $scope.active_layers, layer
+          layer.setStyle drawstyles.defaultStyle
+        else
+          layer.setStyle drawstyles.activeStyle

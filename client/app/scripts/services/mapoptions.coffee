@@ -13,8 +13,4 @@ angular.module('locationdesignerApp')
         autoDiscover: true
         zoom: 12
 
-    return (scope_object) ->
-      _.assign scope_object, config
-      #scope_object.defaults = defaults
-      #scope_object.center = center
-      #scope_object.tiles = tiles
+    return (scope_object) -> _.assign scope_object, config

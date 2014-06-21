@@ -1,22 +1,2 @@
 <leaflet defaults="defaults" center="center" class="map" tiles="tiles"></leaflet>
-<div class="sidebar">
-  <feature heading="Fence">
-    <form role="form">
-      <div class="form-group">
-          <label for="fencename">Fence name</label>
-          <input type="text" class="form-control" id="fencename" placeholder="Name">
-        </div>
-    </form>
-  </feature>
-  <feature heading="Group">
-    <form role="form">
-      <div class="form-group">
-          <label for="groupname">Group name</label>
-          <input type="text" class="form-control" id="groupname" placeholder="Name">
-        </div>
-    </form>
-  </feature>
-  <feature heading="Other">
-    <button class="btn btn-default">Download GeoJSON</button>
-  </feature>
-</div>
+<side-bar layers="active_layers"></side-bar>
