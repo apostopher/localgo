@@ -2,15 +2,16 @@
 
 angular.module('locationdesignerApp')
   .controller 'MainCtrl', ($scope, mapoptions, leafletData, drawoptions, drawstyles, layerSyncService) ->
+    
+    $scope.active_layers = []
+    $scope.clicked_layer = undefined
+
     mapoptions $scope
     leafletData.getMap().then (map) ->
       $scope.map = map
       $scope.addControls map
       $scope.attachEvents map
       $scope.getLayers()
-
-    $scope.active_layers = []
-    $scope.clicked_layer = undefined
 
     $scope.addControls = (map) ->
       drawn_items = new L.FeatureGroup()

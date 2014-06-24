@@ -7,16 +7,16 @@
  # # sideBar
 ###
 angular.module('locationdesignerApp')
-  .directive 'sideBar', ->
+  .directive 'sideBar', () ->
     templateUrl: '/views/sidebar.html'
     restrict: 'E'
     replace: true
     scope:
-      layers: "="
+      fences: "=activelayers"
     link: (scope, element, attrs) ->
       scope.shouldHide = ->
-        if not _.isArray scope.layers then return true
-        scope.layers.length is 0
+        if not _.isArray scope.fences then return true
+        scope.fences.length is 0
 
-      scope.isFenceMode = -> scope.layers?.length is 1
-      scope.isGroupMode = -> scope.layers?.length > 1
+      scope.isFenceMode = -> scope.fences?.length is 1
+      scope.isGroupMode = -> scope.fences?.length > 1

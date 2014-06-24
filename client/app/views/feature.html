@@ -1,6 +1,6 @@
 <div class="feature">
   <header ng-mouseenter="toggleActionButton(false)" ng-mouseleave="toggleActionButton(true)">
-    <div ng-class="{'pull-right': true, 'action-button': true, hidden: hide}" ng-click="toggleState()">{{getMenuText()}}</div>
+    <button ng-class="{'pull-right': true, 'action-button': true, hidden: hide}" ng-click="toggleState($event)">{{getMenuText()}}</button>
     <h5 class="feature-header">{{heading}}</h5>
   </header>
   <div class="feature-body" ng-show="sectionOpen">

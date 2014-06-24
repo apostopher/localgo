@@ -12,7 +12,10 @@ angular.module('locationdesignerApp')
       scope.hide = true
       scope.sectionOpen = true
       scope.toggleActionButton = (state) -> scope.hide = state
-      scope.toggleState = -> scope.sectionOpen = not scope.sectionOpen
+      scope.toggleState = (event) ->
+        event.preventDefault()
+        scope.sectionOpen = not scope.sectionOpen
+        
       scope.getMenuText = ->
         if scope.sectionOpen then return "hide"
         return "show"
