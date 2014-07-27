@@ -47,7 +47,9 @@ angular.module('locationdesignerApp')
     $scope.getLayers = ->
       layerSyncService.getLayers (error, layers) ->
         if error then return console.log error
-        _.each layers, (layer) -> $scope.drawLayer layer, false
+        _.each layers, (layer) ->
+          layer.setStyle drawstyles.defaultStyle
+          $scope.drawLayer layer, false
 
     onLayerClick = (event) ->
       $scope.$apply ->
@@ -60,10 +62,9 @@ angular.module('locationdesignerApp')
           $scope.removeActive layer
 
     $scope.drawLayer = (layer, active = true) ->
-      if active
-        $scope.addActive layer
-      layer.on 'click', onLayerClick
       $scope.drawn_items.addLayer layer
+      layer.on 'click', onLayerClick
+      if active then $scope.addActive layer
 
     $scope.addLayer = (layer) ->
       layerSyncService.addLayer layer, (error) ->

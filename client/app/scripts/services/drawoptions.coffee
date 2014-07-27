@@ -10,9 +10,9 @@ angular.module('locationdesignerApp')
           rectangle : false,
           polyline : false,
           circle :
-            shapeOptions: drawstyles.defaultStyle
+            shapeOptions: drawstyles.newLayerStyle
         edit:
           featureGroup: drawn_items
           edit:
-            selectedPathOptions : drawstyles.defaultStyle
+            selectedPathOptions : drawstyles.newLayerStyle
       }
