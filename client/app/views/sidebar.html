@@ -1,9 +1,14 @@
 <div ng-class="{sidebar: true, hidden: shouldHide()}">
   <div class="sidebar-section" ng-show="isFenceMode()">
     <header><h4>Fence configuration</h4></header>
+    <feature heading="General">
+      
+    </feature>
     <feature heading="Color">
       <color-palette fences="fences"></color-palette>
     </feature>
   </div>
-  <div class="sidebar-section" ng-show="isGroupMode()">Group configuration</div>
+  <div class="sidebar-section" ng-show="isGroupMode()">
+    <header><h4>Group configuration</h4></header>
+  </div>
 </div>

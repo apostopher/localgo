@@ -12,7 +12,7 @@ angular.module('locationdesignerApp')
     restrict: 'E'
     replace: true
     scope:
-      fences: "=activelayers"
+      fences: "="
     link: (scope, element, attrs) ->
       scope.shouldHide = ->
         if not _.isArray scope.fences then return true
